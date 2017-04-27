@@ -1,0 +1,742 @@
+package GamePackage;
+
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.GridLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import javax.swing.AbstractButton;
+import javax.swing.ImageIcon;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import Strategy.PlayingStrategy;
+
+/**
+ * This is the class which creates the frame, the panel and all the buttons on
+ * the board. ActionListeners are implemented in this class for every button
+ * present on the board.
+ * 
+ * 
+ * 
+ */
+public class CreateAndShowGUI implements ActionListener {
+
+	Blocks tempobj = new Blocks();
+	Tile tile_player1 = new Tile();
+
+	List<Player> players = new ArrayList<Player>();
+	Player objplayer1 = new Player();
+	Player objplayer2 = new Player();
+	Player objplayer3 = new Player();
+	Player objplayer4 = new Player();
+	int epoch_count = 0;
+	Boolean isLoadGame = false;
+
+	List<Blocks> blocks = new ArrayList<Blocks>();
+	List<Epoch> epochlist = new ArrayList<Epoch>();
+
+	boolean isTilefromBank;
+	int current_turn = new Random().nextInt(4) + 1; // choosing first random
+													// turn
+	int turn_count = 0;
+
+	ImageIcon kingdom = new ImageIcon("images/logo.jpg");
+	ImageIcon savegame = new ImageIcon("images/savegame.jpg");
+	ImageIcon tiles = new ImageIcon("images/tiles.jpg");
+	ImageIcon imgplayer1 = new ImageIcon("images/player1.jpg");
+	ImageIcon imgplayer2 = new ImageIcon("images/player2.jpg");
+	ImageIcon imgplayer3 = new ImageIcon("images/player3.jpg");
+	ImageIcon imgplayer4 = new ImageIcon("images/player4.jpg");
+
+	JButton player1 = new JButton("", imgplayer1);
+	JButton player2 = new JButton("", imgplayer2);
+	JButton player3 = new JButton("", imgplayer3);
+	JButton player4 = new JButton("", imgplayer4);
+
+	JButton kingdoms = new JButton("", kingdom);
+	JButton save = new JButton("", savegame);
+	JButton drawtile = new JButton("", tiles);
+
+	JButton[][] grid56 = new JButton[5][6];
+
+	JButton rank1_1 = new JButton();
+	JButton rank2_1 = new JButton();
+	JButton rank3_1 = new JButton();
+	JButton rank4_1 = new JButton();
+
+	JButton rank1_2 = new JButton();
+	JButton rank2_2 = new JButton();
+	JButton rank3_2 = new JButton();
+	JButton rank4_2 = new JButton();
+
+	JButton rank1_3 = new JButton();
+	JButton rank2_3 = new JButton();
+	JButton rank3_3 = new JButton();
+	JButton rank4_3 = new JButton();
+
+	JButton rank1_4 = new JButton();
+	JButton rank2_4 = new JButton();
+	JButton rank3_4 = new JButton();
+	JButton rank4_4 = new JButton();
+
+	JButton first_tile_player1 = new JButton();
+
+	JButton strategy1 = new JButton();
+	JButton strategy2 = new JButton();
+	JButton strategy3 = new JButton();
+	JButton strategy4 = new JButton();
+
+	JButton score43[][] = new JButton[4][3];
+	JButton tileDrawnFromBank = new JButton();
+
+	JFrame frame = new JFrame("Reiner Knizia's Kingdoms");
+	Container pane = frame.getContentPane();
+
+	Initialize objInitialize = new Initialize();
+
+	/**
+	 * This method sets the properties of the main frame and calls different
+	 * methods to put up components on the main board.
+	 * 
+	 * @return object of container class
+	 */
+	public Container createAndShowGUI(Boolean isNewGame) {
+
+		blocks = XmlOperation.ReadBlockXML();
+		players = XmlOperation.ReadXML();
+
+		if (isNewGame) {
+			objplayer1 = players.get(0);
+			objplayer2 = players.get(1);
+			objplayer3 = players.get(2);
+			objplayer4 = players.get(3);
+
+			objInitialize.setPlayersToInitials(0);
+
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			pane.setLayout(null);
+			frame.setSize(1000, 725);
+			frame.setVisible(true);
+			frame.setResizable(false);
+
+			addGrid56();
+			addButtonOnCorners();
+			addComponentsToPlayerSpace();
+			addActionsToButtons();
+			getCastlePlayer_1(objplayer1);
+			getCastlePlayer_2(objplayer2);
+			getCastlePlayer_3(objplayer3);
+			getCastlePlayer_4(objplayer4);
+			addScoreButtonsAtBottomLeftCorner();
+			rotateTurns();
+		} else if (!isNewGame) {
+			isLoadGame = true;
+			frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+			pane.setLayout(null);
+			frame.setSize(1000, 725);
+			frame.setVisible(true);
+			frame.setResizable(false);
+			addScoreButtonsAtBottomLeftCorner();
+
+			addGrid56();
+			addButtonOnCorners();
+			addComponentsToPlayerSpace();
+			addActionsToButtons();
+			getCastlePlayer_1(objplayer1);
+			getCastlePlayer_2(objplayer2);
+			getCastlePlayer_3(objplayer3);
+			getCastlePlayer_4(objplayer4);
+		}
+
+		return pane;
+	}
+
+	private void addScoreButtonsAtBottomLeftCorner() {
+		JPanel pane43 = new JPanel();
+		pane43.setLayout(new GridLayout(4, 3));
+		for (int i = 0; i < 4; i++) {
+			for (int j = 0; j < 3; j++) {
+				score43[i][j] = new JButton();
+				pane43.add(score43[i][j]);
+				if (i == 0)
+					score43[i][j].setBackground(Color.CYAN);
+				if (i == 1)
+					score43[i][j].setBackground(Color.RED);
+				if (i == 2)
+					score43[i][j].setBackground(Color.GREEN);
+				if (i == 3)
+					score43[i][j].setBackground(Color.YELLOW);
+			}
+		}
+		pane43.setBounds(0, 600, 200, 99);
+		pane.add(pane43);
+	}
+
+	/**
+	 * This method adds events to mouse clicks of castles of player 1 buttons.
+	 */
+	private void addActionsToButtons() {
+
+		rank1_1.addActionListener(this);
+		rank2_1.addActionListener(this);
+		rank3_1.addActionListener(this);
+		rank4_1.addActionListener(this);
+		first_tile_player1.addActionListener(this);
+		save.addActionListener(this);
+		drawtile.addActionListener(this);
+
+	}
+
+	/**
+	 * Sets the properties of temp Blocks object. used for setting values on
+	 * board's block object
+	 * 
+	 * @param player
+	 *            ,castlerank,playercolor
+	 */
+	private void CopyInfo(int player, int castlerank, Color playercolor) {
+
+		tempobj.setPlayer_id(player);
+		tempobj.setCastle_rank(castlerank);
+
+	}
+
+	/**
+	 * This method rotate turns among players anti-clockwise.
+	 * 
+	 */
+	private void rotateTurns() {
+
+		if (turn_count <= 30) {
+			turn_count++;
+			Blocks block = new Blocks();
+			if (current_turn < 4) {
+
+				switch (current_turn) {
+
+				case 1:
+					current_turn++;
+					strategy1.setEnabled(true);
+					break;
+				case 2:
+					block = PlayingStrategy.Strategy(objplayer2);
+					getCastlePlayer_2(objplayer2);
+					block.setPlayer_id(2);
+					current_turn++;
+					placeobjectonboard(block);
+					strategy1.setEnabled(false);
+					rotateTurns();
+					break;
+				case 3:
+					block = PlayingStrategy.Strategy(objplayer3);
+					getCastlePlayer_3(objplayer3);
+					block.setPlayer_id(3);
+					XmlOperation.WriteXML(players);
+					current_turn++;
+					placeobjectonboard(block);
+					strategy1.setEnabled(false);
+					rotateTurns();
+
+				}
+			} else if (current_turn == 4) {
+				block = PlayingStrategy.Strategy(objplayer4);
+				getCastlePlayer_4(objplayer4);
+				block.setPlayer_id(4);
+				XmlOperation.WriteXML(players);
+				strategy1.setEnabled(false);
+				current_turn = 1;
+				placeobjectonboard(block);
+				rotateTurns();
+			}
+
+		}
+
+	}
+
+	void isBoardfull() {
+		List<Blocks> tempblocklist = XmlOperation.ReadBlockXML();
+		Boolean isFull = true;
+		for (int i = 0; i < tempblocklist.size(); i++) {
+			if (tempblocklist.get(i).getIs_empty()) {
+				isFull = false;
+				break;
+			}
+		}
+		if (isFull) {
+			epoch_count++;
+			new CalculateScoreWhenBoardIsFull(epoch_count);
+			setTextOnScoreButtons(epoch_count);
+			objInitialize.InitializeAll(epoch_count);
+			for (int i = 0; i < 5; i++) {
+				for (int j = 0; j < 6; j++) {
+					grid56[i][j].setBackground(null);
+					grid56[i][j].setText(null);
+					grid56[i][j].setEnabled(true);
+				}
+			}
+			 getCastlePlayer_1(objplayer1);
+			 getCastlePlayer_2(objplayer2);
+			 getCastlePlayer_3(objplayer3);
+			 getCastlePlayer_4(objplayer4);
+			// createAndShowGUI(false);
+			// objInitialize.setBoardToInitial();
+
+		}
+	}
+
+	private void setTextOnScoreButtons(int epoch) {
+		epochlist = XmlOperation.ReadEpochXML();
+
+		if (epoch == 1) {
+
+			score43[0][0].setText("" + epochlist.get(0).getPlayer1_score());
+			score43[1][0].setText("" + epochlist.get(0).getPlayer2_score());
+			score43[2][0].setText("" + epochlist.get(0).getPlayer3_score());
+			score43[3][0].setText("" + epochlist.get(0).getPlayer4_score());
+		}
+//		if (epoch == 2) {
+//			score43[0][1].setText("" + epochlist.get(1).getPlayer1_score());
+//			score43[1][1].setText("" + epochlist.get(1).getPlayer2_score());
+//			score43[2][1].setText("" + epochlist.get(1).getPlayer3_score());
+//			score43[3][1].setText("" + epochlist.get(1).getPlayer4_score());
+//		}
+//		if (epoch == 3) {
+//			score43[0][2].setText("" + epochlist.get(2).getPlayer1_score());
+//			score43[1][2].setText("" + epochlist.get(2).getPlayer2_score());
+//			score43[2][2].setText("" + epochlist.get(2).getPlayer3_score());
+//			score43[3][2].setText("" + epochlist.get(2).getPlayer4_score());
+//		}
+
+	}
+
+	/**
+	 * Fill board on game load
+	 */
+	public void fillBoardOnLoad() {
+		List<Blocks> blocks = XmlOperation.ReadBlockXML();
+		for (int i = 0; i < blocks.size(); i++) {
+			if (blocks.get(i).getIs_empty() == false) {
+				placeobjectonboard(blocks.get(i));
+			}
+
+		}
+	}
+
+	/**
+	 * This method place selected castle or tile on board
+	 * 
+	 * @param block
+	 */
+	private void placeobjectonboard(Blocks block) {
+		if (block.row > 0 && block.colummn > 0) {
+			if (block.castle_rank != 0) {
+
+				grid56[block.row - 1][block.colummn - 1].setText(String
+						.valueOf(block.castle_rank));
+				grid56[block.row - 1][block.colummn - 1]
+						.setBackground(setBlockcolor(block.getPlayer_id()));
+				grid56[block.row - 1][block.colummn - 1].setEnabled(false);
+			} else {
+				grid56[block.row - 1][block.colummn - 1].setText(String
+						.valueOf(block.tile));
+				grid56[block.row - 1][block.colummn - 1]
+						.setBackground(setBlockcolor(block.getPlayer_id()));
+				grid56[block.row - 1][block.colummn - 1].setEnabled(false);
+			}
+		}
+		updateBlockList(block);
+
+	}
+
+	/**
+	 * Update block list when something(tile/castle) is placed on board
+	 * 
+	 * @param block
+	 */
+	private void updateBlockList(Blocks tempobj) {
+
+		for (int i = 0; i < blocks.size(); i++) {
+			if (blocks.get(i).getRow() == tempobj.getRow()
+					&& blocks.get(i).getColummn() == tempobj.getColummn()) {
+				blocks.get(i).setColor(tempobj.getColor());
+				blocks.get(i).setIs_empty(false);
+				blocks.get(i).setCastle_rank(tempobj.castle_rank);
+				blocks.get(i).setTile(tempobj.getTile());
+				blocks.get(i).setPlayer_id(tempobj.getPlayer_id());
+				blocks.get(i).setPoints(tempobj.getPoints());
+			}
+		}
+		XmlOperation.WriteBlockXML(blocks);
+
+		new HandleBaseValue(tempobj, blocks);
+		isBoardfull();
+
+	}
+
+	/**
+	 * Sets block color according to player
+	 * 
+	 * @param player_id
+	 * @return Color
+	 */
+	public static Color setBlockcolor(int player_id) {
+		switch (player_id) {
+		case 1:
+			return Color.cyan;
+
+		case 2:
+			return Color.red;
+		case 3:
+			return Color.green;
+		case 4:
+			return Color.yellow;
+
+		}
+		return null;
+	}
+
+	/**
+	 * This method adds buttons on player spaces in which first tile drawn is
+	 * shown.
+	 */
+	private void addComponentsToPlayerSpace() {
+		Tile first_tile = new Tile();
+
+		first_tile_player1.setBounds(700, 600, 100, 100);
+		tileDrawnFromBank.setBounds(600, 600, 100, 100);
+
+		if (!isLoadGame) {
+			tile_player1 = TileBankOperations.getRandomTileFromBank();
+			first_tile_player1.setText(tile_player1.getTile_name());
+			players.get(0).setFirst_tile(tile_player1.getTile_name());
+
+			first_tile = TileBankOperations.getRandomTileFromBank();
+			players.get(1).setFirst_tile(first_tile.getTile_name());
+
+			first_tile = TileBankOperations.getRandomTileFromBank();
+			players.get(2).setFirst_tile(first_tile.getTile_name());
+
+			first_tile = TileBankOperations.getRandomTileFromBank();
+			players.get(3).setFirst_tile(first_tile.getTile_name());
+
+			XmlOperation.WriteXML(players);
+		} else {
+			first_tile_player1.setText(players.get(0).getFirst_tile());
+
+		}
+
+		pane.add(first_tile_player1);
+		strategy1.setBounds(425, 650, 150, 50);
+		strategy2.setBounds(850, 325, 150, 50);
+		strategy3.setBounds(425, 0, 150, 50);
+		strategy4.setBounds(0, 325, 150, 50);
+
+//		pane.add(strategy1);
+//		pane.add(strategy2);
+//		pane.add(strategy3);
+//		pane.add(strategy4);
+
+		rank1_1.setBounds(200, 600, 200, 20);
+		rank2_1.setBounds(200, 620, 200, 20);
+		rank3_1.setBounds(200, 640, 200, 20);
+		rank4_1.setBounds(200, 660, 200, 20);
+
+		pane.add(rank1_1);
+		pane.add(rank2_1);
+		pane.add(rank3_1);
+		pane.add(rank4_1);
+
+		rank1_2.setBounds(800, 500, 200, 20);
+		rank2_2.setBounds(800, 520, 200, 20);
+		rank3_2.setBounds(800, 540, 200, 20);
+		rank4_2.setBounds(800, 560, 200, 20);
+
+		pane.add(rank1_2);
+		pane.add(rank2_2);
+		pane.add(rank3_2);
+		pane.add(rank4_2);
+
+		rank1_3.setBounds(600, 0, 200, 20);
+		rank2_3.setBounds(600, 20, 200, 20);
+		rank3_3.setBounds(600, 40, 200, 20);
+		rank4_3.setBounds(600, 60, 200, 20);
+
+		pane.add(rank1_3);
+		pane.add(rank2_3);
+		pane.add(rank3_3);
+		pane.add(rank4_3);
+
+		rank1_4.setBounds(0, 100, 200, 20);
+		rank2_4.setBounds(0, 120, 200, 20);
+		rank3_4.setBounds(0, 140, 200, 20);
+		rank4_4.setBounds(0, 160, 200, 20);
+
+		pane.add(rank1_4);
+		pane.add(rank2_4);
+		pane.add(rank3_4);
+		pane.add(rank4_4);
+
+		player1.setBounds(400, 600, 200, 50);
+		player2.setBounds(800, 250, 50, 200);
+		player3.setBounds(400, 50, 200, 50);
+		player4.setBounds(150, 250, 50, 200);
+
+		pane.add(player1);
+		pane.add(player2);
+		pane.add(player3);
+		pane.add(player4);
+	}
+
+	/**
+	 * This method adds buttons on the four corners - Kingdoms logo, Save Game,
+	 * Epoch Counter, Tile Bank.
+	 */
+	private void addButtonOnCorners() {
+		kingdoms.setBounds(0, 0, 200, 100);
+		save.setBounds(800, 0, 200, 100);
+		drawtile.setBounds(800, 600, 200, 100);
+
+		pane.add(kingdoms);
+		pane.add(save);
+		pane.add(drawtile);
+	}
+
+	/**
+	 * This method adds the game board to the middle of the frame and adds
+	 * actions to mouse clicks when playing the game.
+	 */
+	private void addGrid56() {
+
+		// Making the 5*6 grid for placing the tiles and playing the game.
+		JPanel pane56 = new JPanel();
+		pane56.setLayout(new GridLayout(5, 6));
+		for (int x = 0; x < 5; x++) {
+			for (int y = 0; y < 6; y++) {
+				final int i, j;
+				i = x;
+				j = y;
+				grid56[x][y] = new JButton(); // creates new button
+				pane56.add(grid56[x][y]);// adds button to grid
+
+				grid56[x][y].addActionListener(new ActionListener() {
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+
+						if (tempobj.player_id != 0 && tempobj.castle_rank != 0) {
+							tempobj.setRow(i + 1);
+							tempobj.setColummn(j + 1);
+							((AbstractButton) e.getSource()).setText(String
+									.valueOf(tempobj.player_id)
+									+ ": Rank"
+									+ tempobj.castle_rank);
+							((AbstractButton) e.getSource())
+									.setBackground(Color.cyan);
+							tempobj.setColor("cyan");
+							grid56[i][j].setEnabled(false);
+							// updateBlockList(tempobj);
+							switch (tempobj.castle_rank) {
+							case 1:
+								objplayer1.rank1_castle--;
+								break;
+							case 2:
+								objplayer1.rank2_castle--;
+								break;
+							case 3:
+								objplayer1.rank3_castle--;
+								break;
+							case 4:
+								objplayer1.rank4_castle--;
+
+							}
+							players.set(0,objplayer1 );
+							XmlOperation.WriteXML(players);
+							getCastlePlayer_1(objplayer1);
+
+						} else if (tempobj.tile != null) {
+							// set row and column in block object to be used
+							// later for calculating base values
+							tempobj.setRow(i + 1);
+							tempobj.setColummn(j + 1);
+							tempobj.player_id = 1;
+							if (!isTilefromBank)
+								first_tile_player1.setEnabled(false);
+							((AbstractButton) e.getSource())
+									.setText(tempobj.tile);
+							((AbstractButton) e.getSource())
+									.setBackground(Color.cyan);
+							tempobj.setColor("cyan");
+							grid56[i][j].setEnabled(false);
+							// updateBlockList(tempobj);
+
+						}
+						updateBlockList(tempobj);
+						XmlOperation.WriteBlockXML(blocks);
+						rotateTurns();
+
+						// reset tempobj parameters to ensure dummy text does
+						// not get placed on grid
+						tempobj.setPlayer_id(0);
+						tempobj.setCastle_rank(0);
+						tempobj.setTile(null);
+						// tempobj.setPlayer_idcolor(null);
+
+					}
+
+				});
+
+			}
+		}
+		pane56.setBounds(200, 100, 600, 500);
+		pane.add(pane56);
+	}
+
+	/**
+	 * Sets the text on rank buttons for player 4
+	 * 
+	 */
+	private void getCastlePlayer_4(Player player4) {
+
+		players = XmlOperation.ReadXML();
+		player4 = players.get(3);
+
+		rank1_4.setText(" Rank 1 : " + player4.getRank1_castle());
+		rank2_4.setText(" Rank 2 : " + player4.getRank2_castle());
+		rank3_4.setText(" Rank 3 : " + player4.getRank3_castle());
+		rank4_4.setText(" Rank 4 : " + player4.getRank4_castle());
+		// objplayer4.setColor(Color.yellow);
+		objplayer4.setPlayer_id(4);
+		objplayer4.strategy = player4.getStrategy();
+		strategy4.setText(objplayer4.strategy);
+
+		// }
+	}
+
+	/****
+	 * Sets the text on rank buttons for player 3
+	 */
+	private void getCastlePlayer_3(Player player3) {
+
+		players = XmlOperation.ReadXML();
+		player3 = players.get(2);
+
+		rank1_3.setText(" Rank 1 : " + player3.getRank1_castle());
+		rank2_3.setText(" Rank 2 : " + player3.getRank2_castle());
+		rank3_3.setText(" Rank 3 : " + player3.getRank3_castle());
+		rank4_3.setText(" Rank 4 : " + player3.getRank4_castle());
+		// objplayer3.setColor(Color.green);
+		objplayer3.setPlayer_id(3);
+		objplayer3.strategy = player3.getStrategy();
+		strategy3.setText(objplayer3.strategy);
+		// }
+
+	}
+
+	/****
+	 * Sets the text on rank buttons for player 2
+	 */
+	private void getCastlePlayer_2(Player player2) {
+
+		players = XmlOperation.ReadXML();
+		player2 = players.get(1);
+		rank1_2.setText(" Rank 1 : " + player2.getRank1_castle());
+		rank2_2.setText(" Rank 2 : " + player2.getRank2_castle());
+		rank3_2.setText(" Rank 3 : " + player2.getRank3_castle());
+		rank4_2.setText(" Rank 4 : " + player2.getRank4_castle());
+		objplayer2.setPlayer_id(2);
+		objplayer2.strategy = player2.getStrategy();
+		strategy2.setText(objplayer2.strategy);
+
+	}
+
+	/****
+	 * Sets the text on castle buttons for player 1
+	 */
+	private void getCastlePlayer_1(Player player1) {
+
+		players = XmlOperation.ReadXML();
+		player1 = players.get(0);
+		if (player1.getRank1_castle() == 0)
+			rank1_1.setEnabled(false);
+		else
+			rank1_1.setEnabled(true);
+		if (player1.getRank2_castle() == 0)
+			rank2_1.setEnabled(false);
+		else
+			rank2_1.setEnabled(true);
+		if (player1.getRank3_castle() == 0)
+			rank3_1.setEnabled(false);
+		else
+			rank3_1.setEnabled(true);
+		if (player1.getRank4_castle() == 0)
+			rank4_1.setEnabled(false);
+		else
+			rank4_1.setEnabled(true);
+		rank1_1.setText(" Rank 1 : " + player1.getRank1_castle());
+		rank2_1.setText(" Rank 2 : " + player1.getRank2_castle());
+		rank3_1.setText(" Rank 3 : " + player1.getRank3_castle());
+		rank4_1.setText(" Rank 4 : " + player1.getRank4_castle());
+		strategy1.setText("You");
+		//players.set(0, player1);
+		//XmlOperation.WriteXML(players);
+
+	}
+
+	/**
+	 * This method contains the actions on various buttons click events.
+	 */
+	public void actionPerformed(ActionEvent e) {
+
+		if (e.getSource() == rank1_1) {
+			CopyInfo(1, 1, Color.cyan);
+		} else if (e.getSource() == rank2_1) {
+			CopyInfo(1, 2, Color.cyan);
+		} else if (e.getSource() == rank3_1) {
+			CopyInfo(1, 3, Color.cyan);
+		} else if (e.getSource() == rank4_1) {
+			CopyInfo(1, 4, Color.cyan);
+		} else if (e.getSource() == first_tile_player1) {
+			CopyInfo(tile_player1);
+			isTilefromBank = false;
+		}
+		if (e.getSource() == drawtile) {
+
+			Tile tile = TileBankOperations.getRandomTileFromBank();
+
+			if (tile != null) {
+				tileDrawnFromBank.setText(tile.getTile_name());
+				tileDrawnFromBank.setBackground(Color.WHITE);
+				tileDrawnFromBank.setEnabled(false);
+				pane.add(tileDrawnFromBank);
+				CopyInfo(tile);
+				isTilefromBank = true;
+			} else
+				drawtile.setEnabled(false);
+		}
+		if (e.getSource() == save) {
+			XmlOperation.WriteBlockXML(blocks);
+			XmlOperation.WriteXML(players);
+		}
+
+	}
+
+	/**
+	 * Sets the properties of temporary block object when tile is placed
+	 * 
+	 * @param tile
+	 */
+	private void CopyInfo(Tile tile) {
+		tempobj.tile = tile.tile_name;
+		tempobj.points = tile.tile_value;
+		// tempobj.player = 0;
+		tempobj.castle_rank = 0;
+
+	}
+
+}

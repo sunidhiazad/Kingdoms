@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Epochs>
+    <epoch>
+        <epoch_no>1</epoch_no>
+        <player1_score>20</player1_score>
+        <player2_score>40</player2_score>
+        <player3_score>-36</player3_score>
+        <player4_score>0</player4_score>
+    </epoch>
+    <epoch>
+        <epoch_no>2</epoch_no>
+        <player1_score>-32</player1_score>
+        <player2_score>-32</player2_score>
+        <player3_score>-30</player3_score>
+        <player4_score>-26</player4_score>
+    </epoch>
+    <epoch>
+        <epoch_no>3</epoch_no>
+        <player1_score>-17</player1_score>
+        <player2_score>-23</player2_score>
+        <player3_score>37</player3_score>
+        <player4_score>-8</player4_score>
+    </epoch>
+    <epoch>
+        <epoch_no>4</epoch_no>
+        <player1_score>191</player1_score>
+        <player2_score>108</player2_score>
+        <player3_score>74</player3_score>
+        <player4_score>99</player4_score>
+    </epoch>
+    <epoch>
+        <epoch_no>5</epoch_no>
+        <player1_score>79</player1_score>
+        <player2_score>26</player2_score>
+        <player3_score>75</player3_score>
+        <player4_score>15</player4_score>
+    </epoch>
+    <epoch>
+        <epoch_no>6</epoch_no>
+        <player1_score>0</player1_score>
+        <player2_score>-27</player2_score>
+        <player3_score>45</player3_score>
+        <player4_score>12</player4_score>
+    </epoch>
+</Epochs>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Epochs>
+    <epoch>
+        <epoch_no>1</epoch_no>
+        <player1_score>38</player1_score>
+        <player2_score>108</player2_score>
+        <player3_score>86</player3_score>
+        <player4_score>100</player4_score>
+    </epoch>
+    <epoch>
+        <epoch_no>2</epoch_no>
+        <player1_score>38</player1_score>
+        <player2_score>108</player2_score>
+        <player3_score>86</player3_score>
+        <player4_score>100</player4_score>
+    </epoch>
+</Epochs>

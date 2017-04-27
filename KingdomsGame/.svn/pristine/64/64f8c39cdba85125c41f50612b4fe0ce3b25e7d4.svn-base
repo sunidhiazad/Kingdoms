@@ -1,0 +1,157 @@
+package Strategy;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import GamePackage.Blocks;
+import GamePackage.Player;
+import GamePackage.Tile;
+import GamePackage.TileBankOperations;
+import GamePackage.XmlOperation;
+
+public class MaxOwnScorePlayer {
+	String[] options_list = { "Castle", "Tile" };
+	String option_chosen = "";
+	int player_id = 0;
+	int rank1_castles = 0;
+	int rank2_castles = 0;
+	int rank3_castles = 0;
+	int rank4_castles = 0;
+	int castle_to_place = 0;
+	int top_blk = 0;
+	int btm_blk = 0;
+	int left_blk = 0;
+	int right_blk = 0;
+	List<Player> player_list = new ArrayList<Player>();
+	List<Blocks> blocks_list = new ArrayList<Blocks>();
+	List<Tile> tiles_list = new ArrayList<Tile>();
+	Blocks selected_block = new Blocks();
+	
+	String first_tile = "";
+	String selected_tile = "";
+
+	public Blocks Strategy(Player player) {
+		
+		 player_list = XmlOperation.ReadXML();
+		 blocks_list = XmlOperation.ReadBlockXML();
+		 tiles_list = XmlOperation.ReadTileXML();
+		
+		player_id = player.getPlayer_id();
+		selected_block.setColor(player.getColor());
+		option_chosen = options_list[new Random().nextInt(2)];
+		switch (option_chosen) {
+		case ("Castle"):
+			rank1_castles = player_list.get(player_id - 1).getRank1_castle();
+			rank2_castles = player_list.get(player_id - 1).getRank2_castle();
+			rank3_castles = player_list.get(player_id - 1).getRank3_castle();
+			rank4_castles = player_list.get(player_id - 1).getRank4_castle();
+			ArrayList<Integer> castleoptions = new ArrayList<Integer>();
+
+			if (rank1_castles > 0)
+				castleoptions.add(1);
+			if (rank2_castles > 0)
+				castleoptions.add(2);
+			if (rank3_castles > 0)
+				castleoptions.add(3);
+			if (rank4_castles > 0)
+				castleoptions.add(4);
+			castle_to_place = castleoptions.get(new Random()
+					.nextInt(castleoptions.size()));
+			switch (castle_to_place) {
+			case 1:
+				player_list.get(player_id - 1).setRank1_castle(
+						player_list.get(player_id - 1).getRank1_castle() - 1);
+				break;
+			case 2:
+				player_list.get(player_id - 1).setRank2_castle(
+						player_list.get(player_id - 1).getRank2_castle() - 1);
+				break;
+			case 3:
+				player_list.get(player_id - 1).setRank3_castle(
+						player_list.get(player_id - 1).getRank3_castle() - 1);
+				break;
+			case 4:
+				player_list.get(player_id - 1).setRank4_castle(
+						player_list.get(player_id - 1).getRank4_castle() - 1);
+				break;
+			}
+			XmlOperation.WriteXML(player_list);
+			int max_value = 0;
+			for (int i = 0; i < blocks_list.size(); i++) {
+
+				if (blocks_list.get(i).getIs_empty()) {
+					if (blocks_list.get(i).getRow_base_value()
+							+ blocks_list.get(i).getColumn_base_value() >= max_value) {
+						max_value = blocks_list.get(i).getRow_base_value()
+								+ blocks_list.get(i).getColumn_base_value();
+						selected_block = blocks_list.get(i);
+					}
+				}
+			}
+			selected_block.setCastle_rank(castle_to_place);
+			selected_block.setPlayer_id(player_id);
+
+			break;
+
+		case ("Tile"):
+
+			first_tile = player.getFirst_tile();
+
+			// If a player has a good starting tile, choose that and try to
+			// place it adjacent to its own castles.
+			if (first_tile.equals("GoldMine") || first_tile.equals("Wizard")
+					| selected_tile.substring(0).equals("R"))
+				selected_tile = first_tile;
+			else
+				selected_tile = TileBankOperations.getRandomTileFromBank()
+						.getTile_name();
+
+			if (selected_tile.equals("GoldMine")
+					|| selected_tile.equals("Wizard")
+					|| selected_tile.substring(0).equals("R")) {
+				int playerCastleLocationOnBoard = 0;
+				for (int i = 0; i < blocks_list.size(); i++) {
+					if (blocks_list.get(i).getPlayer_id() == player_id) {
+						playerCastleLocationOnBoard = blocks_list.get(i)
+								.getBlock_id();
+						break;
+					}
+				}
+				top_blk = playerCastleLocationOnBoard - 6;
+				btm_blk = playerCastleLocationOnBoard + 6;
+				left_blk = playerCastleLocationOnBoard - 1;
+				right_blk = playerCastleLocationOnBoard + 1;
+
+				for (int i = 0; i < blocks_list.size(); i++) {
+					if (blocks_list.get(i).getIs_empty()
+							&& blocks_list.get(i).getBlock_id() == top_blk
+							|| blocks_list.get(i).getBlock_id() == btm_blk
+							|| blocks_list.get(i).getBlock_id() == left_blk
+							|| blocks_list.get(i).getBlock_id() == right_blk) {
+						selected_block = blocks_list.get(i);
+						break;
+					}
+				}
+				if (selected_block == null) {
+					for (int i = 0; i < blocks_list.size(); i++) {
+						if (blocks_list.get(i).getIs_empty())
+							selected_block = blocks_list.get(i);
+					}
+				}
+
+			} else {
+				for (int i = 0; i < blocks_list.size(); i++) {
+					if (blocks_list.get(i).getIs_empty())
+						selected_block = blocks_list.get(i);
+				}
+			}
+
+			selected_block.setTile(selected_tile);
+			break;
+		}
+		//selected_block.setColor(RandomPlayer.setBlockcolor(player_id));
+		return selected_block;
+
+	}
+}

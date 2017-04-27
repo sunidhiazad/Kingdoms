@@ -1,0 +1,332 @@
+package GamePackage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * Instance of this class calculates score for every player when board is full
+ * and updates the score in player xml.
+ * 
+ * 
+ * 
+ */
+public class CalculateScoreWhenBoardIsFull {
+
+	int row = 0;
+	int column = 0;
+	List<Blocks> block_list = new ArrayList<Blocks>();
+	List<Player> player_list = new ArrayList<Player>();
+	List<Epoch> epoch_list = new ArrayList<Epoch>();
+
+	/**
+	 * Constructor to call all the necessary methods.
+	 * 
+	 * @param epoch
+	 * 
+	 */
+	public CalculateScoreWhenBoardIsFull(int epoch) {
+		WorkOnMountainTile();
+		WorkOnGoldMineTile();
+		WorkOnWizardTile();
+		WorkOnDragonTile();
+		if (epoch == 1)
+			calculateScore_epoch1();
+		else if (epoch == 2)
+			calculateScore_epoch2();
+		else
+			calculateScore_epoch3();
+	}
+
+	/**
+	 * Dragon Tile cancels all the resource tiles in its row and its column. Its
+	 * a method to update points in the blocks according to this criterion.
+	 */
+	private void WorkOnDragonTile() {
+		block_list = XmlOperation.ReadBlockXML();
+		player_list = XmlOperation.ReadXML();
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).tile == "Dragon") {
+				row = block_list.get(i).getRow();
+				column = block_list.get(i).getColummn();
+				break;
+			}
+		}
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).getRow() == row
+					&& block_list.get(i).getPoints() > 0) {
+				block_list.get(i).setPoints(0);
+			}
+			if (block_list.get(i).getColummn() == column
+					&& block_list.get(i).getPoints() > 0) {
+				block_list.get(i).setPoints(0);
+			}
+		}
+		XmlOperation.WriteBlockXML(block_list);
+
+	}
+
+	/**
+	 * Goldmine tile doubles the values of all the tiles in its row and column.
+	 * Its a method to update the points in blocks accordingly.
+	 */
+	private void WorkOnGoldMineTile() {
+		block_list = XmlOperation.ReadBlockXML();
+		player_list = XmlOperation.ReadXML();
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).tile == "GoldMine") {
+				row = block_list.get(i).getRow();
+				column = block_list.get(i).getColummn();
+				break;
+			}
+		}
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).getRow() == row)
+				block_list.get(i).setRow_base_value(
+						block_list.get(i).getRow_base_value() * 2);
+
+			if (block_list.get(i).getColummn() == column)
+				block_list.get(i).setColumn_base_value(
+						block_list.get(i).getColumn_base_value() * 2);
+
+		}
+		XmlOperation.WriteBlockXML(block_list);
+	}
+
+	/**
+	 * Mountain tile divides the rows and columns into two. Its a method to
+	 * update the rows and columns accordingly.
+	 * 
+	 */
+	private void WorkOnMountainTile() {
+		block_list = XmlOperation.ReadBlockXML();
+		player_list = XmlOperation.ReadXML();
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).tile == "GoldMine") {
+				row = block_list.get(i).getRow();
+				column = block_list.get(i).getColummn();
+				break;
+			}
+		}
+
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).getRow() == row
+					&& block_list.get(i).getColummn() < column)
+				block_list.get(i).setRow(block_list.get(i).getRow() * 10 + 1);
+			if (block_list.get(i).getRow() == row
+					&& block_list.get(i).getColummn() > column)
+				block_list.get(i).setRow(block_list.get(i).getRow() * 10 + 2);
+			if (block_list.get(i).getColummn() == column
+					&& block_list.get(i).getRow() < row)
+				block_list.get(i).setColummn(
+						block_list.get(i).getColummn() * 10 + 1);
+			if (block_list.get(i).getColummn() == column
+					&& block_list.get(i).getRow() > row)
+				block_list.get(i).setColummn(
+						block_list.get(i).getColummn() * 10 + 2);
+		}
+		XmlOperation.WriteBlockXML(block_list);
+	}
+
+	/**
+	 * Wizard tile doubles the ranks of castles in its adjacent blocks. Its a
+	 * method that does the same in blocks list.
+	 */
+	private void WorkOnWizardTile() {
+		block_list = XmlOperation.ReadBlockXML();
+		player_list = XmlOperation.ReadXML();
+		int block_id = 0;
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).tile == "Wizard") {
+				block_id = block_list.get(i).getBlock_id();
+			}
+		}
+		int top_blk = block_id - 6;
+		int btm_blk = block_id + 6;
+		int left_blk = block_id - 1;
+		int right_blk = block_id + 1;
+
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).getBlock_id() == top_blk
+					|| block_list.get(i).getBlock_id() == btm_blk
+					|| block_list.get(i).getBlock_id() == left_blk
+					|| block_list.get(i).getBlock_id() == right_blk) {
+				block_list.get(i).setCastle_rank(
+						block_list.get(i).getCastle_rank() * 2);
+			}
+		}
+		XmlOperation.WriteBlockXML(block_list);
+	}
+
+	/**
+	 * Calculates the score of each player for epoch 1 and update it in
+	 * respective xml file.
+	 */
+	public void calculateScore_epoch1() {
+		block_list = XmlOperation.ReadBlockXML();
+		Epoch epoch1 = new Epoch();
+
+		int player1 = 50;
+		int player2 = 50;
+		int player3 = 50;
+		int player4 = 50;
+
+		for (int i = 0; i < block_list.size(); i++) {
+
+			if (block_list.get(i).getPlayer_id() == 1) {
+
+				player1 = player1 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 2) {
+				player2 = player2 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 3) {
+				player3 = player3 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 4) {
+				player4 = player4 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+		}
+		epoch1.setEpoch_no(1);
+		epoch1.setPlayer1_score(player1);
+		epoch1.setPlayer2_score(player2);
+		epoch1.setPlayer3_score(player3);
+		epoch1.setPlayer4_score(player4);
+		epoch_list.add(epoch1);
+		XmlOperation.WriteEpochXML(epoch_list);
+
+	}
+
+	/**
+	 * Calculates the score of each player for epoch 2 and update it in
+	 * respective xml file.
+	 */
+	private void calculateScore_epoch2() {
+		block_list = XmlOperation.ReadBlockXML();
+		epoch_list = XmlOperation.ReadEpochXML();
+		Epoch epoch2 = new Epoch();
+		int player1 = 50;
+		int player2 = 50;
+		int player3 = 50;
+		int player4 = 50;
+
+		for (int i = 0; i < block_list.size(); i++) {
+
+			if (block_list.get(i).getPlayer_id() == 1) {
+
+				player1 = player1 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 2) {
+				player2 = player2 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 3) {
+				player3 = player3 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 4) {
+				player4 = player4 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+		}
+		epoch2.setEpoch_no(2);
+		epoch2.setPlayer1_score(player1);
+		epoch2.setPlayer2_score(player2);
+		epoch2.setPlayer3_score(player3);
+		epoch2.setPlayer4_score(player4);
+		epoch_list.add(epoch2);
+		XmlOperation.WriteEpochXML(epoch_list);
+	}
+
+	/**
+	 * Calculates the score of each player for epoch 3 and update it in
+	 * respective xml file.
+	 */
+	private void calculateScore_epoch3() {
+		block_list = XmlOperation.ReadBlockXML();
+		epoch_list = XmlOperation.ReadEpochXML();
+		Epoch epoch3 = new Epoch();
+		int player1 = 50;
+		int player2 = 50;
+		int player3 = 50;
+		int player4 = 50;
+
+		for (int i = 0; i < block_list.size(); i++) {
+
+			if (block_list.get(i).getPlayer_id() == 1) {
+
+				player1 = player1 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 2) {
+				player2 = player2 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 3) {
+				player3 = player3 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+
+			if (block_list.get(i).getPlayer_id() == 4) {
+				player4 = player4 + block_list.get(i).getCastle_rank()
+						* block_list.get(i).getRow_base_value()
+						+ block_list.get(i).getCastle_rank()
+						* block_list.get(i).getColumn_base_value();
+
+			}
+		}
+		epoch3.setEpoch_no(3);
+		epoch3.setPlayer1_score(player1);
+		epoch3.setPlayer2_score(player2);
+		epoch3.setPlayer3_score(player3);
+		epoch3.setPlayer4_score(player4);
+		epoch_list.add(epoch3);
+		XmlOperation.WriteEpochXML(epoch_list);
+	}
+
+}

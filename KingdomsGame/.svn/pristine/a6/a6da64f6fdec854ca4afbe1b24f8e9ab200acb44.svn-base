@@ -1,0 +1,53 @@
+package GamePackage;
+
+import java.util.ArrayList;
+import java.util.List;
+
+/**
+ * This class for setting points value and base values for row and column for
+ * each of blocks
+ */
+public class HandleBaseValue {
+	Blocks blockobj = new Blocks();
+	int row_points = 0;
+	int column_points = 0;
+
+	List<Blocks> block_list = new ArrayList<Blocks>();
+
+	/**
+	 * Constructor to set the base value.
+	 * 
+	 * @param blockobj
+	 * @param block_list
+	 */
+	public HandleBaseValue(Blocks blockobj, List<Blocks> block_list) {
+		this.block_list = block_list;
+		this.blockobj = blockobj;
+		setBaseValue();
+	}
+
+	/**
+	 * Sets the base value for each row and column and writes the updates list
+	 * back to xml.
+	 */
+	private void setBaseValue() {
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).getRow() == blockobj.getRow()) {
+				row_points += block_list.get(i).getPoints();
+			}
+			if (block_list.get(i).getColummn() == blockobj.getColummn()) {
+				column_points += block_list.get(i).getPoints();
+			}
+		}
+		for (int i = 0; i < block_list.size(); i++) {
+			if (block_list.get(i).getRow() == blockobj.getRow()) {
+				block_list.get(i).setRow_base_value(row_points);
+			}
+			if (block_list.get(i).getColummn() == blockobj.getColummn()) {
+				block_list.get(i).setColumn_base_value(column_points);
+			}
+		}
+		XmlOperation.WriteBlockXML(block_list);
+	}
+
+}

@@ -1,0 +1,93 @@
+package GamePackage;
+/**
+ * class to handle epoch score
+ *
+ */
+public class Epoch {
+	int epoch_no;
+	int player1_score;
+	int player2_score;
+	int player3_score;
+	int player4_score;
+	int EpochCount;
+	
+	public int getEpochCount() {
+		return EpochCount;
+	}
+	public void setEpochCount(int epochCount) {
+		EpochCount = epochCount;
+	}
+	/**
+	 * 
+	 * @return epoch number
+	 */
+	public int getEpoch_no() {
+		return epoch_no;
+	}
+	/**
+	 * 
+	 * @param epoch_no
+	 */
+	public void setEpoch_no(int epoch_no) {
+		this.epoch_no = epoch_no;
+	}
+	/**
+	 * 
+	 * @return player1_score
+	 */
+	public int getPlayer1_score() {
+		return player1_score;
+	}
+	/**
+	 * 
+	 * @param player1_score
+	 */
+	public void setPlayer1_score(int player1_score) {
+		this.player1_score = player1_score;
+	}
+	/**
+	 * 
+	 * @return player2_score
+	 */
+	public int getPlayer2_score() {
+		return player2_score;
+	}
+	/**
+	 * 
+	 * @param player2_score
+	 */
+	public void setPlayer2_score(int player2_score) {
+		this.player2_score = player2_score;
+	}
+	/**
+	 * 
+	 * @return player3_score
+	 */
+	public int getPlayer3_score() {
+		return player3_score;
+	}
+	/**
+	 * 
+	 * @param player3_score
+	 */
+	public void setPlayer3_score(int player3_score) {
+		this.player3_score = player3_score;
+	}
+	/**
+	 * 
+	 * @return player4_score
+	 */
+	public int getPlayer4_score() {
+		return player4_score;
+	}
+	/**
+	 * 
+	 * @param player4_score
+	 */
+	public void setPlayer4_score(int player4_score) {
+		this.player4_score = player4_score;
+	}
+	
+
+
+}

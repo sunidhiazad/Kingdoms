@@ -1,0 +1,83 @@
+package JUnit;
+
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import GamePackage.Blocks;
+import GamePackage.Initialize;
+import GamePackage.Player;
+import GamePackage.Tile;
+import GamePackage.XmlOperation;
+/**
+ * This class is used to  test XML file intialization
+ * 
+ *
+ */
+public class InitializeTest {
+	Initialize obj = new Initialize();
+	List<Player> player_list=new ArrayList<Player>();
+	List<Blocks> block_list=new ArrayList<Blocks>();
+	List<Tile> tile_list=new ArrayList<Tile>();
+	int rank1_castle,rank2_castle,rank3_castle,rank4_castle;
+	
+	
+	@Before
+	public void setUp() throws Exception {
+		obj.setPlayersToInitials(1);
+		obj.InitializeAll(1);
+		player_list=XmlOperation.ReadXML();
+		block_list=XmlOperation.ReadBlockXML();
+		tile_list=XmlOperation.ReadTileXML();
+	
+		rank1_castle=player_list.get(0).getRank1_castle();
+		rank2_castle=player_list.get(0).getRank2_castle();
+		rank3_castle=player_list.get(0).getRank3_castle();
+		rank4_castle=player_list.get(0).getRank4_castle();
+	}
+
+	@After
+	public void tearDown() throws Exception {
+	}
+
+	@Test
+	public final void testInitializeAll() {
+	}
+
+	@Test
+	public final void testSetPlayersToInitials() {
+	
+		assertEquals("Size of the player list extracted from xml should be 4", player_list.size(), 4);
+		
+		
+		assertEquals("player's rank1 castle updated", rank1_castle, 2);
+		assertEquals("player's rank2 castle updated", rank2_castle, 3);
+		assertEquals("player's rank3 castle updated", rank3_castle, 2);
+		assertEquals("player's rank4 castle updated", rank4_castle, 1);
+	}
+	
+	@Test
+	public final void testSetBoardToInitials()
+	{
+		assertEquals("Size of the block list extracted from xml should be 30", block_list.size(), 30);
+	}
+	
+	@Test
+	public final void testSetTileBankToInitials()
+	{
+		for (int i = 0; i < tile_list.size(); i++) {
+			if(tile_list.get(i).getTile_name()=="Resource3")
+			{
+				assertEquals("check tile count",2,tile_list.get(i).getTile_count());
+				assertEquals("check tile value",3, tile_list.get(i).getTile_value());
+			}
+			
+		}
+	}
+	
+}

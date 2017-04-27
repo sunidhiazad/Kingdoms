@@ -1,0 +1,181 @@
+package GamePackage;
+/**
+ * This class for the player object operation
+ *
+ */
+
+public class Player {
+	int player_id;
+	boolean hasturn=false;
+	//Color color;
+	String color="";
+	int rank1_castle;
+	int rank2_castle;
+	int rank3_castle;
+	int rank4_castle;
+	int first_tile_value;
+	
+	public int getFirst_tile_value() {
+		return first_tile_value;
+	}
+/**
+ * 
+ * @param first_tile_value
+ */
+	public void setFirst_tile_value(int first_tile_value) {
+		this.first_tile_value = first_tile_value;
+	}
+
+	public Boolean getIsTilePlaced() {
+		return isTilePlaced;
+	}
+/**
+ * 
+ * @param isTilePlaced
+ */
+	public void setIsTilePlaced(Boolean isTilePlaced) {
+		this.isTilePlaced = isTilePlaced;
+	}
+
+	Boolean isTilePlaced=false;
+	public int getEpoch1_score() {
+		return epoch1_score;
+	}
+	/**
+	 * 
+	 * @param epoch1_score
+	 */
+
+	public void setEpoch1_score(int epoch1_score) {
+		this.epoch1_score = epoch1_score;
+	}
+
+	public int getEpoch2_score() {
+		return epoch2_score;
+	}
+/**
+ * 
+ * @param epoch2_score
+ */
+
+	public void setEpoch2_score(int epoch2_score) {
+		this.epoch2_score = epoch2_score;
+	}
+
+	public int getEpoch3_score() {
+		return epoch3_score;
+	}
+/**
+ * 
+ * @param epoch3_score
+ */
+	public void setEpoch3_score(int epoch3_score) {
+		this.epoch3_score = epoch3_score;
+	}
+
+	int epoch1_score=0;
+	int epoch2_score=0;
+	int epoch3_score=0;
+	String strategy="";
+	String first_tile="";
+
+	public String getFirst_tile() {
+		return first_tile;
+	}
+/**
+ * 
+ * @param first_tile
+ */
+	public void setFirst_tile(String first_tile) {
+		this.first_tile = first_tile;
+	}
+
+	public int getPlayer_id() {
+		return player_id;
+	}
+/**
+ * 
+ * @param player_id
+ */
+	public void setPlayer_id(int player_id) {
+		this.player_id = player_id;
+	}
+
+	public boolean isHasturn() {
+		return hasturn;
+	}
+/**
+ * 
+ * @param hasturn
+ */
+	public void setHasturn(boolean hasturn) {
+		this.hasturn = hasturn;
+	}
+
+	public String getColor() {
+		return color;
+	}
+/**
+ * 
+ * @param color
+ */
+	public void setColor(String color) {
+		this.color = color;
+	}
+
+	public int getRank1_castle() {
+		return rank1_castle;
+	}
+/**
+ * 
+ * @param rank1_castle
+ */
+	public void setRank1_castle(int rank1_castle) {
+		this.rank1_castle = rank1_castle;
+	}
+
+	public int getRank2_castle() {
+		return rank2_castle;
+	}
+/**
+ * 
+ * @param rank2_castle
+ */
+	public void setRank2_castle(int rank2_castle) {
+		this.rank2_castle = rank2_castle;
+	}
+
+	public int getRank3_castle() {
+		return rank3_castle;
+	}
+/**
+ * 
+ * @param rank3_castle
+ */
+	public void setRank3_castle(int rank3_castle) {
+		this.rank3_castle = rank3_castle;
+	}
+
+	public int getRank4_castle() {
+		return rank4_castle;
+	}
+/**
+ * 
+ * @param rank4_castle
+ */
+	public void setRank4_castle(int rank4_castle) {
+		this.rank4_castle = rank4_castle;
+	}
+
+	public String getStrategy() {
+		return strategy;
+	}
+/**
+ * 
+ * @param strategy
+ */
+	public void setStrategy(String strategy) {
+		this.strategy = strategy;
+	}
+
+}
